@@ -17,14 +17,11 @@ private val dev.gitlive.firebase.auth.FirebaseAuth.jsAuth: FirebaseJsAuth
 
 // --- Dynamic JS Interop for Provider ---
 
-// CRITICAL AND FINAL FIX:
-// 1. We import the 'GoogleAuthProvider' class directly by its JavaScript name.
+// This dynamic block allows us to write raw JavaScript to get the native provider.
+// We need to do this because the gitlive library does not provide a direct Kotlin equivalent.
 @JsModule("firebase/auth")
 @JsNonModule
-@JsName("GoogleAuthProvider")
-private external class GoogleAuthProvider {
-    // We don't need to define anything inside, we just need a reference to the class constructor.
-}
+private external val GoogleAuthProviderModule: dynamic
 
 // --- Actual Implementations ---
 
@@ -33,11 +30,11 @@ private external class GoogleAuthProvider {
  * It calls the native Firebase JS signInWithPopup method via our interop helper.
  */
 internal actual suspend fun AuthServiceImpl.performGoogleSignIn() {
-    // 2. We now create a new instance of our "external class" directly in Kotlin.
-    // The Kotlin/JS compiler knows how to translate this into `new GoogleAuthProvider()` in JavaScript.
-    val jsProvider = GoogleAuthProvider()
+    // 1. Create a new instance of the native provider directly.
+    // This resolves the "unused variable" warning and is the correct approach.
+    val jsProvider = js("new GoogleAuthProviderModule.GoogleAuthProvider()")
 
-    // 3. Call the native 'signInWithPopup' function and await the result.
+    // 2. Call the native 'signInWithPopup' function and await the result.
     auth.jsAuth.signInWithPopup(jsProvider).await()
 }
 
