@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -45,9 +46,12 @@ kotlin {
 
     
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.play.services.auth)
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.4.0"))
+            implementation(libs.google.firebase.auth)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -59,6 +63,10 @@ kotlin {
 
             implementation(libs.mvvm.core)
             implementation(libs.firebase.auth)
+        }
+
+        jsMain.dependencies {
+            implementation(npm("firebase", "9.22.2"))
         }
     }
 }

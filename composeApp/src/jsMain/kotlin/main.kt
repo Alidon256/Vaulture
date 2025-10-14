@@ -10,9 +10,9 @@ fun main() {
 
     Firebase.initialize(
         options = FirebaseOptions(
-            applicationId = "Add your firebase web appId here",
-            apiKey = "Add your firebase project api key here",
-            projectId = "Add your firebase projectId here"
+            applicationId = "1:703611560855:web:979aac53ec812d14555ad2",
+            apiKey = "AIzaSyAd6dv9rKe1FWl9-vgo0PG5dn35E_MhnSs",
+            projectId = "vaulture256"
         )
     )
 

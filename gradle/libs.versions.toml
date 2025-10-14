@@ -15,10 +15,12 @@ firebaseAuth = "2.3.0"
 junit = "4.13.2"
 kotlin = "2.2.20"
 mvvmCore = "0.16.1"
+playServicesAuth = "21.4.0"
 
 
 [libraries]
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
+google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -31,6 +33,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 
 mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "mvvmCore" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 
 
 [plugins]

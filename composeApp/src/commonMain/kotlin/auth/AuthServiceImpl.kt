@@ -1,51 +1,69 @@
 package auth
 
 import dev.gitlive.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
+import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+// 1. DEFINE THE 'EXPECT' CONTRACT FOR PLATFORM-SPECIFIC IMPLEMENTATIONS
+// These functions are internal and must be implemented by each platform (androidMain, jsMain).
+
+/**
+ * Triggers the platform-specific Google Sign-In flow.
+ * On JS, this will open a popup. On Android, this will throw an exception
+ * because the flow must be started from an Activity.
+ */
+internal expect suspend fun AuthServiceImpl.performGoogleSignIn()
+
+/**
+ * Completes the sign-in process on Android using the ID token from the Google Sign-In intent.
+ */
+internal expect suspend fun AuthServiceImpl.signInWithGoogleIdToken(idToken: String)
+
+// 2. IMPLEMENT THE COMMON SERVICE LOGIC
 class AuthServiceImpl(
-    val auth: FirebaseAuth,
-    val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // 'internal' makes it accessible to the 'actual' functions in the same module
+    internal val auth: FirebaseAuth
 ) : AuthService {
 
-    override val currentUserId: String
-        get() = auth.currentUser?.uid.toString()
+    override val isAuthenticated: Flow<Boolean> = auth.authStateChanged
+        .map { user -> user != null && !user.isAnonymous }
 
-    override val isAuthenticated: Boolean
-        get() = auth.currentUser != null && auth.currentUser?.isAnonymous == false
+    override val currentUser: Flow<User?> = auth.authStateChanged
+        .map { firebaseUser -> firebaseUser?.toUser() }
 
-    override val currentUser: Flow<User> =
-        auth.authStateChanged.map { it?.let { User(it.uid, it.isAnonymous) } ?: User() }
-
-    private suspend fun launchWithAwait(block : suspend  () -> Unit) {
-        scope.async {
-            block()
-        }.await()
-    }
-    override suspend fun authenticate(email: String, password: String) {
-        launchWithAwait {
-            auth.signInWithEmailAndPassword(email, password)
-        }
-    }
     override suspend fun createUser(email: String, password: String) {
-        val result = launchWithAwait {
-            auth.createUserWithEmailAndPassword(email, password)
-        }
+        auth.createUserWithEmailAndPassword(email, password)
+    }
+
+    override suspend fun signInWithEmail(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+    }
+
+    override suspend fun signInWithGoogle() {
+        // This single public method delegates to the platform-specific 'expect' function.
+        performGoogleSignIn()
     }
 
     override suspend fun signOut() {
-
-        if (auth.currentUser?.isAnonymous == true) {
-            auth.currentUser?.delete()
+        // Ensure currentUser is not null before attempting to delete anonymous user data.
+        auth.currentUser?.let { user ->
+            if (user.isAnonymous) {
+                user.delete()
+            }
         }
-
         auth.signOut()
-
-        //create  new user anonymous session
     }
 }
+
+/**
+ * A private helper function to map the FirebaseUser object to our own domain [User] model.
+ * This prevents leaking Firebase-specific models into the rest of the app.
+ */
+private fun FirebaseUser.toUser() = User(
+    uid = this.uid,
+    displayName = this.displayName,
+    email = this.email,
+    isAnonymous = this.isAnonymous,
+
+)
