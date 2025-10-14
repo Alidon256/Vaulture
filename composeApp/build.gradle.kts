@@ -65,9 +65,6 @@ kotlin {
             implementation(libs.firebase.auth)
         }
 
-        jsMain.dependencies {
-            implementation(npm("firebase", "9.22.2"))
-        }
     }
 }
 
