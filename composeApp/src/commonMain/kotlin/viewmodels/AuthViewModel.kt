@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.viewmodels
+package viewmodels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

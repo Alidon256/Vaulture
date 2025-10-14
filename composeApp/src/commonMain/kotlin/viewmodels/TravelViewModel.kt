@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.viewmodels
+package viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
