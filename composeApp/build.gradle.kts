@@ -52,6 +52,7 @@ kotlin {
             implementation(libs.play.services.auth)
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.4.0"))
             implementation(libs.google.firebase.auth)
+            implementation(libs.coil.network.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,14 +61,13 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.material.icons.extended)
+            implementation(libs.coil.compose)
 
             implementation(libs.mvvm.core)
             implementation(libs.firebase.auth)
         }
 
-        jsMain.dependencies {
-            implementation(npm("firebase", "9.22.2"))
-        }
     }
 }
 
