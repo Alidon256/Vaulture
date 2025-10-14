@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import org.vaulture.com.presentation.theme.AppTheme
+import theme.AppTheme
 // Assuming your generated resources are here
 import vaulture.composeapp.generated.resources.*
 

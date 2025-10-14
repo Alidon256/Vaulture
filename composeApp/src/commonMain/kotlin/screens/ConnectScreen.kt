@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.screens
+package screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
