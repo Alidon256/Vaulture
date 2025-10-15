@@ -9,9 +9,11 @@ package auth
  * @param displayName The user's display name, which might be null (e.g., for email/password users).
  * @param email The user's email address.
  */
+
 data class User(
     val uid: String,
     val displayName: String?,
     val email: String?,
-    val isAnonymous: Boolean = true
+    val isAnonymous: Boolean,
+    val photoUrl: String? = null // Add this line
 )

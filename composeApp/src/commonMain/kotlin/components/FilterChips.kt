@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.components
+package components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth

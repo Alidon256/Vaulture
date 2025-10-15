@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.screens
+package screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,9 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.vaulture.com.data.models.TravelDestination
-import org.vaulture.com.presentation.components.DestinationCard
-import org.vaulture.com.presentation.viewmodels.TravelViewModel
+import components.DestinationCard
+import viewmodels.TravelViewModel
 
 @Composable
 fun SearchScreen(

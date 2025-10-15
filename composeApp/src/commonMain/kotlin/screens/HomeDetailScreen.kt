@@ -1,5 +1,5 @@
 // Create a new file: HotelDetailScreen.kt
-package org.vaulture.com.presentation.screens
+package screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.presentation.theme.AppTheme
+import theme.AppTheme
 import vaulture.composeapp.generated.resources.* // Your resources
 
 data class Amenity(val name: String, val icon: ImageVector)

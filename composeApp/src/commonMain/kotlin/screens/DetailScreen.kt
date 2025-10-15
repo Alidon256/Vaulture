@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.screens
+package screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -15,9 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import data.models.TravelDestination
 import org.jetbrains.compose.resources.painterResource
 import vaulture.composeapp.generated.resources.Res
 import vaulture.composeapp.generated.resources.ic_img1
+import viewmodels.TravelViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

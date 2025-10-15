@@ -4,6 +4,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseOptions
 import dev.gitlive.firebase.initialize
 import org.jetbrains.skiko.wasm.onWasmReady
+import screens.AppNavigation
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
@@ -19,7 +20,7 @@ fun main() {
 
     onWasmReady {
         CanvasBasedWindow(canvasElementId = "ComposeTarget") {
-            App()
+            AppNavigation()
         }
     }
 }

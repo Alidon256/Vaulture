@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.components
+package components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -64,9 +64,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import data.repository.ItemType
+import data.repository.SearchableItem
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.data.repository.ItemType
-import org.vaulture.com.data.repository.SearchableItem
 
 @Composable
 fun SearchBar(
@@ -288,6 +288,12 @@ fun SearchBar(
                                         ItemType.CHANNEL -> Icons.Default.AccountBox // Or Icons.Filled.Person, Icons.Filled.Storefront
                                         ItemType.SHORTS -> Icons.Default.SmartDisplay // Or Icons.Filled.OndemandVideo, Icons.Filled.Bolt
                                         ItemType.AUDIO -> Icons.Default.MusicNote
+                                        ItemType.SONG -> TODO()
+                                        ItemType.ARTIST -> TODO()
+                                        ItemType.ALBUM -> TODO()
+                                        ItemType.PLAYLIST -> TODO()
+                                        ItemType.GENRE -> TODO()
+                                        ItemType.PODCAST -> TODO()
                                     },
                                     text = suggestion.title,
                                     highlight = query,
@@ -359,7 +365,7 @@ private fun SuggestionRow(
 }
 // --- Previews ---
 
-@Preview(showBackground = true, name = "Collapsed SearchBar")
+@Preview
 @Composable
 fun SearchBarPreviewCollapsed() {
     MaterialTheme {
@@ -375,7 +381,7 @@ fun SearchBarPreviewCollapsed() {
     }
 }
 
-@Preview(showBackground = true, name = "Expanded Empty")
+@Preview
 @Composable
 fun SearchBarPreviewExpandedEmpty() {
     MaterialTheme {
@@ -392,7 +398,7 @@ fun SearchBarPreviewExpandedEmpty() {
     }
 }
 
-@Preview(showBackground = true, name = "Expanded With Query & Suggestions")
+@Preview
 @Composable
 fun SearchBarPreviewExpandedWithQuery() {
     MaterialTheme {

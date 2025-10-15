@@ -1,7 +1,8 @@
-package org.vaulture.com.data.repository
+package data.repository
 
-import org.vaulture.com.data.models.Channel
-import org.vaulture.com.data.models.Video
+import data.models.Channel
+import data.models.Video
+
 
 sealed class SearchableItem{
     abstract val id: String
@@ -31,12 +32,28 @@ enum class ItemType{
     VIDEO,
     AUDIO,
     SHORTS,
-    CHANNEL
+    CHANNEL,
+    SONG,
+    ARTIST,
+    ALBUM,
+    PLAYLIST,
+    GENRE,
+    PODCAST
 }
+
 enum class SearchContext{
     ALL,
     CHATS
 }
+// Add this class somewhere in your file or in a shared location:
+data class SimpleItem(
+    override val title: String,
+    override val type: ItemType
+) : SearchableItem() {
+    override val id: String get() = title
+    override val thumbnailUrl: String get() = ""
+}
+
 
 /*object SearchSuggestionRepository {
     suspend fun getSuggestions(

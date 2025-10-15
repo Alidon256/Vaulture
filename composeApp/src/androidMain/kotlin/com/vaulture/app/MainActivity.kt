@@ -20,6 +20,7 @@ import dev.gitlive.firebase.FirebaseOptions
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.initialize
 import kotlinx.coroutines.launch
+import screens.AppNavigation
 
 class MainActivity : ComponentActivity() {
 
@@ -73,7 +74,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // Pass the function to launch the sign-in flow into our App composable.
-            App(onGoogleSignInRequest = { launchGoogleSignIn() })
+            //App(onGoogleSignInRequest = { launchGoogleSignIn() })
+            AppNavigation(onGoogleSignInRequest = { launchGoogleSignIn() })
         }
     }
 

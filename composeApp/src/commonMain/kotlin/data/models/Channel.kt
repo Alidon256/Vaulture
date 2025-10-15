@@ -1,4 +1,4 @@
-package org.vaulture.com.data.models
+package data.models
 
 data class Channel(
     val id: String = "",

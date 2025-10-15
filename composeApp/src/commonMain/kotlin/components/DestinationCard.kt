@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.components
+package components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,9 +13,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import data.models.TravelDestination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.data.models.TravelDestination
 import vaulture.composeapp.generated.resources.Res
 import vaulture.composeapp.generated.resources.ic_img1
 

@@ -1,5 +1,5 @@
 // Create a new file: ErrorScreen.kt
-package org.vaulture.com.presentation.screens
+package screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.presentation.theme.AppTheme
+import theme.AppTheme
+
 
 @Composable
 fun ErrorScreen(

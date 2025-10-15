@@ -1,133 +1,137 @@
-// Create a new file: TripsScreen.kt
-package org.vaulture.com.presentation.screens
+package screens
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.presentation.theme.AppTheme
-import vaulture.composeapp.generated.resources.* // Your resources
+import data.repository.Trip
+import data.repository.TripRepository
 
-data class TripItem(
-    val id: String,
-    val title: String,
-    val imageRes: DrawableResource
-)
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripsScreen(
-    onNavigateBack: () -> Unit,
     onTripClick: (tripId: String) -> Unit
 ) {
-    val trips = listOf(
-        TripItem("Uganda", "Trip to Uganda", Res.drawable.uganda), // Replace
-        TripItem("Kenya", "Trip to Kenya", Res.drawable.kenya),
-        TripItem("Egypt", "Trip to Egypt", Res.drawable.egypt),
-        TripItem("Nigeria", "Trip to Nigeria", Res.drawable.nigeria),
-        TripItem("Morocco", "Trip to Morocco", Res.drawable.spain),
-        TripItem("Ghana", "Trip to Ghana", Res.drawable.greece)
-    )
+    val trips = remember { TripRepository.getTrips() }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Trips", fontWeight = FontWeight.SemiBold) },
-                /*navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },*/
+                title = { Text("Your Trips", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface, // Or surfaceColorAtElevation
+                    containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         },
-        containerColor = MaterialTheme.colorScheme.background // Light gray background as per mockup
+        containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
-        LazyColumn(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(start = 16.dp,end =16.dp, top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(paddingValues)
         ) {
-            items(trips) { trip ->
-                TripCard(tripItem = trip, onClick = { onTripClick(trip.id) })
+            // Determine column count based on screen width for responsiveness
+            val columns = if (maxWidth > 600.dp) 3 else 2
+
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(columns),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalItemSpacing = 12.dp
+            ) {
+                itemsIndexed(trips) { index, trip ->
+                    // Animate each item's entry
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(animationSpec = tween(500, delayMillis = index * 100)) +
+                                slideInVertically(
+                                    initialOffsetY = { it / 2 },
+                                    animationSpec = tween(500, delayMillis = index * 100)
+                                )
+                    ) {
+                        TripCard(trip = trip, onClick = { onTripClick(trip.id) })
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun TripCard(tripItem: TripItem, onClick: () -> Unit) {
+fun TripCard(trip: Trip, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp), // Consistent height for trip cards
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box {
             AsyncImage(
-                model = null,
-                placeholder = painterResource(tripItem.imageRes),
-                error = painterResource(tripItem.imageRes),
-                contentDescription = tripItem.title,
+                model = trip.imageUrl,
+                contentDescription = trip.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio((0.6f + kotlin.random.Random.nextFloat() * (1.2f - 0.6f)))
+                    //.aspectRatio(0.8f)
             )
             // Gradient overlay for better text visibility
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .matchParentSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
-                            startY = 200f // Adjust gradient start
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                            startY = 200f
                         )
                     )
             )
-            Text(
-                text = tripItem.title,
-                style = MaterialTheme.typography.titleLarge.copy(color = Color.White, fontWeight = FontWeight.Bold),
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
-            )
+            ) {
+                Text(
+                    text = trip.title,
+                    style = MaterialTheme.typography.titleMedium.copy(color = Color.White, fontWeight = FontWeight.Bold),
+                )
+                Text(
+                    text = trip.country,
+                    style = MaterialTheme.typography.bodySmall.copy(color = Color.White.copy(alpha = 0.8f)),
+                )
+            }
         }
     }
 }
 
-@Composable
+
+
 @Preview
+@Composable
 fun TripsScreenPreview() {
     AppTheme {
-        TripsScreen(
-            onNavigateBack = {},
-            onTripClick = {}
-        )
+        TripsScreen(onTripClick = {})
     }
-
 }

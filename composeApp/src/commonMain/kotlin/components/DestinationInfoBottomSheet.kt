@@ -1,5 +1,5 @@
 // Create a new file: DestinationInfoBottomSheet.kt
-package org.vaulture.com.presentation.components // Or screens if it's more of a screen
+package components // Or screens if it's more of a screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.vaulture.com.presentation.theme.AppTheme
+import theme.AppTheme
 import vaulture.composeapp.generated.resources.* // Your resources
 
 @OptIn(ExperimentalMaterial3Api::class)

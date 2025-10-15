@@ -1,6 +1,6 @@
-package org.vaulture.com.data.repository
+package data.repository
 
-import org.vaulture.com.data.models.TravelDestination
+import data.models.TravelDestination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

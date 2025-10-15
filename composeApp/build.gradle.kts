@@ -63,7 +63,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.material.icons.extended)
             implementation(libs.coil.compose)
-
+            implementation(libs.coil.network.ktor)
+            implementation(libs.navigation.compose)
+            implementation(compose.foundation)
             implementation(libs.mvvm.core)
             implementation(libs.firebase.auth)
         }

@@ -1,4 +1,4 @@
-package org.vaulture.com.data.models
+package data.models
 
 data class DeviceCodeInfo(
     val userCode: String,

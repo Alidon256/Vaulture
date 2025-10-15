@@ -1,15 +1,15 @@
 package viewmodels
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import data.models.TravelDestination
+import data.repository.TravelRepository
+import data.repository.TravelRepositoryImpl
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.vaulture.com.data.models.TravelDestination
-import org.vaulture.com.data.repository.TravelRepository
-import org.vaulture.com.data.repository.TravelRepositoryImpl
+
 
 open class TravelViewModel : ViewModel() {
     private val repository: TravelRepository = TravelRepositoryImpl()

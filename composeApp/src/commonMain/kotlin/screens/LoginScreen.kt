@@ -1,4 +1,4 @@
-package org.vaulture.com.presentation.screens
+/*package screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.vaulture.com.presentation.theme.AppTheme
 import org.vaulture.com.presentation.viewmodels.AuthViewModel
-/*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -222,238 +222,7 @@ fun LoginScreen(
             }
         }
     }
-}*/
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginScreen(
-    authViewModel: AuthViewModel,
-    onLoginSuccess: () -> Unit,
-    onNavigateToSignUp: () -> Unit,
-    onForgotPassword: () -> Unit = {}
-) {
-    authViewModel.email
-    authViewModel.password
-    //var email by remember { mutableStateOf("") }
-    //var password by remember { mutableStateOf("") }
-
-    val isLoading = authViewModel.isLoading
-    val errorMessage = authViewModel.errorMessage
-    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
-
-    // If already authenticated (e.g., due to LaunchedEffect in AppNavigation or quick re-login)
-    // or becomes authenticated after a successful login action.
-    LaunchedEffect(isAuthenticated) {
-        if (isAuthenticated) {
-            onLoginSuccess()
-        }
-    }
-    LaunchedEffect(errorMessage) {
-        // You could show a Snackbar or Toast here for the error message
-        if (errorMessage != null) {
-            // Example: snackbarHostState.showSnackbar(message = errorMessage!!, duration = SnackbarDuration.Short)
-            // authViewModel.clearErrorMessage() // Clear after showing
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Top spacing
-            Spacer(modifier = Modifier.height(80.dp))
-
-            // Title
-            Text(
-                text = "Log in",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Social Login Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Facebook Button
-                Button(
-                    onClick = {
-                        authViewModel.initiateGoogleSignIn()
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                    //enabled = !isLoading
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "G",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Google",
-                            fontSize = 14.sp,
-                            color = Color.White
-                        )
-                    }
-                }
-
-
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // "or log in with email" text
-            Text(
-                text = "or log in with email",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Email Input
-            OutlinedTextField(
-                value = authViewModel.email,
-                onValueChange = { authViewModel.email = it },
-                placeholder = {
-                    Text(
-                        text = "Your email",
-                        color = Color.Gray,
-                        fontSize = 16.sp
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF2E7D32),
-                    unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                ),
-                shape = RoundedCornerShape(8.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Password Input
-            OutlinedTextField(
-                value = authViewModel.password,
-                onValueChange = { authViewModel.password = it },
-                placeholder = {
-                    Text(
-                        text = "Password",
-                        color = Color.Gray,
-                        fontSize = 16.sp
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF2E7D32),
-                    unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                ),
-                shape = RoundedCornerShape(8.dp),
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Forgot Password Link
-            Text(
-                text = "Forgot password?",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .clickable { onForgotPassword() },
-                textDecoration = TextDecoration.Underline
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Log In Button
-            Button(
-                onClick =  { authViewModel.loginUser(
-                    onSuccess = {}
-                ) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2E7D32)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                enabled = authViewModel.email.isNotBlank() && authViewModel.password.isNotBlank()
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = "Log In",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                }
-
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Sign Up Link
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 32.dp)
-            ) {
-                Text(
-                    text = "Don't have an account? ",
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "Sign Up",
-                    color = Color(0xFF2E7D32),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    //modifier = Modifier.clickable(enabled = !isLoading) { onNavigateToSignUp() },
-                    textDecoration = TextDecoration.Underline
-                )
-            }
-        }
-    }
 }
-
 
 @Preview
 @Composable
@@ -463,4 +232,4 @@ fun LoginScreenPreview() {
         // a Koin module specifically for previews.
 
     }
-}
+}*/
