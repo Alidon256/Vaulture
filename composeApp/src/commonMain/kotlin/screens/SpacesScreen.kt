@@ -1,12 +1,13 @@
 package screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.forEach
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -16,15 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import data.repository.Member
-import data.repository.Space
-import data.repository.SpaceRepository
+import data.Member
+import data.Space
+import data.SpaceRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
 
@@ -78,12 +78,15 @@ fun SpacesScreen(
 @Composable
 private fun SpaceListItem(
     space: Space,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit,modifier: Modifier = Modifier
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth()
+    Column(
+        // The overall horizontal alignment for the content inside.
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .clip(RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
@@ -91,37 +94,42 @@ private fun SpaceListItem(
                         MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
                     )
                 )
-            ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(space.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Spacer(Modifier.height(4.dp))
-            Text(
-                space.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
             )
-            Spacer(Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                MemberAvatarGroup(members = space.members)
-                if (space.unreadCount > 0) {
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onBackground
-                    ) { Text("${space.unreadCount}") }
-                }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                shape = RoundedCornerShape(16.dp) // Match the clip shape
+            )
+            // --- KEY FIX: Add consistent padding for all content inside the card ---
+            .padding(16.dp)
+    ) {
+        Text(space.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+        Spacer(Modifier.height(4.dp))
+        Text(
+            space.description,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            MemberAvatarGroup(members = space.members)
+            if (space.unreadCount > 0) {
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    // Use a contrasting color for better readability on a primary background
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) { Text("${space.unreadCount}") }
             }
         }
     }
 }
+
 
 @Composable
 private fun MemberAvatarGroup(

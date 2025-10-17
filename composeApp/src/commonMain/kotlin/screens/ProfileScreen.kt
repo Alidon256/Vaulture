@@ -241,7 +241,7 @@ private fun ProfileScreenPreview() {
         override val currentUser = kotlinx.coroutines.flow.MutableStateFlow(
             auth.User("1", "Tanya Edwards", "tanya.edwards@example.com", false)
         )
-        override suspend fun createUser(email: String, password: String) {}
+        override suspend fun createUser(email: String, password: String,username: String,profilePicture: ByteArray?) {}
         override suspend fun signInWithEmail(email: String, password: String) {}
         override suspend fun signInWithGoogle() {}
         override suspend fun signOut() {}

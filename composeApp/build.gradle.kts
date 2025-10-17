@@ -41,7 +41,7 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     androidTarget()
 
     
@@ -68,6 +68,10 @@ kotlin {
             implementation(compose.foundation)
             implementation(libs.mvvm.core)
             implementation(libs.firebase.auth)
+            implementation(libs.firebase.firestore)
+            implementation(libs.firebase.storage)
+            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+
         }
 
     }

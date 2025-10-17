@@ -25,7 +25,12 @@ interface AuthService {
      * Creates a new user with the given email and password.
      * @throws Exception if the user creation fails (e.g., email already in use).
      */
-    suspend fun createUser(email: String, password: String)
+    suspend fun createUser(
+        email: String,
+        password: String,
+        username: String,
+        profilePicture: ByteArray?
+    )
 
     /**
      * Signs in an existing user with the given email and password.

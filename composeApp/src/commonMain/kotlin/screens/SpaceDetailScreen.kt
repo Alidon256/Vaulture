@@ -1,7 +1,6 @@
 package screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,8 +22,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import data.repository.Message
-import data.repository.SpaceRepository
+import data.Message
+import data.Space
+import data.SpaceRepository
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
@@ -35,22 +35,47 @@ fun SpaceDetailScreen(
     spaceId: String,
     onNavigateBack: () -> Unit
 ) {
-    val space = remember { SpaceRepository.getSpaces().find { it.id == spaceId } }
-    val messages = remember { SpaceRepository.getMessagesForSpace(spaceId) }
+    val coroutineScope = rememberCoroutineScope()
+    var space by remember { mutableStateOf<Space?>(null) }
+    //val messages = remember { SpaceRepository.getMessagesForSpace(spaceId) }
+    var messages by remember { mutableStateOf<List<Message>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
     var newMessage by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
-    if (space == null) {
-        // Handle case where space is not found
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Space not found.") }
+    LaunchedEffect(spaceId) {
+        isLoading = true
+        space = SpaceRepository.getSpaceById(spaceId)
+        messages = SpaceRepository.getMessagesForSpace(spaceId)
+        isLoading = false
+    }
+
+    if (isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return
     }
+
+    /*if (space == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Space not found.") }
+        return
+    }*/
+    if (space == null) {
+        // --- TEMPORARY DIAGNOSTIC ---// This will display the exact value of spaceId that is causing the problem.
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Space not found.")
+                // Add this Text element to show us the faulty ID
+                Text("Received ID: [${spaceId}]")
+            }
+        }
+        return
+    }
+
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(space.name, fontWeight = FontWeight.SemiBold) },
+                title = { Text(space!!.name, fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -64,10 +89,13 @@ fun SpaceDetailScreen(
                 value = newMessage,
                 onValueChange = { newMessage = it },
                 onSend = {
-                    // TODO: Send message logic
-                    newMessage = ""
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(messages.size)
+                    if (newMessage.isNotBlank()) {
+                        coroutineScope.launch {
+                            //SpaceRepository.sendMessageToSpace(spaceId, newMessage)
+                            messages = SpaceRepository.getMessagesForSpace(spaceId)
+                            newMessage = ""
+                            listState.animateScrollToItem(messages.size)
+                        }
                     }
                 }
             )
@@ -98,7 +126,8 @@ private fun MessageBubble(message: Message) {
             AsyncImage(
                 model = message.author.avatarUrl,
                 contentDescription = message.author.name,
-                modifier = Modifier.size(32.dp).clip(CircleShape)
+                modifier = Modifier.size(32.dp).clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
             Spacer(Modifier.width(8.dp))
         }

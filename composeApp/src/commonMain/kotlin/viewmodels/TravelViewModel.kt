@@ -1,8 +1,8 @@
 package viewmodels
 
-import data.models.TravelDestination
-import data.repository.TravelRepository
-import data.repository.TravelRepositoryImpl
+import data.TravelDestination
+import data.TravelRepository
+import data.TravelRepositoryImpl
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

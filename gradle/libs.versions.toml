@@ -26,7 +26,9 @@ coilCompose = "3.3.0"
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
+firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebaseAuth" }
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
+firebase-storage = { module = "dev.gitlive:firebase-storage", version.ref = "firebaseAuth" }
 google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

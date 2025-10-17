@@ -21,9 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import data.repository.Trip
-import data.repository.TripRepository
-
+import data.Trip
+import data.TripRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
 

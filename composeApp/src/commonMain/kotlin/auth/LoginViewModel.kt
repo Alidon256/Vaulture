@@ -5,20 +5,54 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 
 /**
  * Represents the state of the LoginScreen.
- * Using a single state class makes it easier to manage and observe UI changes.
  */
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
+    val username: String = "",
+       val profilePicture: ByteArray? = null,
     val isLoading: Boolean = false,
     val error: String? = null
-)
+) {
+    // ... inside the LoginUiState data class
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true// CORRECTED: Use this::class instead of javaClass for multiplatform compatibility
+        if (this::class != other!!::class) return false
+
+        other as LoginUiState
+        // ... the rest of the equals function is correct
+        if (email != other.email) return false
+        if (password != other.password) return false
+        if (username != other.username) return false
+        if (isLoading != other.isLoading) return false
+        if (error != other.error) return false
+        if (profilePicture != null) {
+            if (other.profilePicture == null) return false
+            if (!profilePicture.contentEquals(other.profilePicture)) return false
+        } else if (other.profilePicture != null) return false
+        return true
+    }
+// The rest of the file remains the same.
+
+
+    override fun hashCode(): Int {
+        var result = email.hashCode()
+        result = 31 * result + password.hashCode()
+        result = 31 * result + username.hashCode()
+        result = 31 * result + isLoading.hashCode()
+        result = 31 * result + (error?.hashCode() ?: 0)
+        result = 31 * result + (profilePicture?.contentHashCode() ?: 0)
+        return result
+    }
+}
+
 
 class LoginViewModel(val authService: AuthService) : BaseViewModel() {
 
@@ -36,6 +70,11 @@ class LoginViewModel(val authService: AuthService) : BaseViewModel() {
                 }
             }
         }
+    }
+
+
+    fun onProfilePictureChange(bytes: ByteArray) {
+        _uiState.update { it.copy(profilePicture = bytes, error = null) }
     }
 
     fun onEmailChange(email: String) {
@@ -58,14 +97,29 @@ class LoginViewModel(val authService: AuthService) : BaseViewModel() {
     }
 
     fun onCreateAccountClick() {
-        val email = _uiState.value.email
-        val password = _uiState.value.password
+        val state = _uiState.value
 
-        if (!isEmailValid(email) || password.length < 6) {
+        if (state.username.isBlank()) {
+            _uiState.update { it.copy(error = "Please enter a username.") }
+            return
+        }
+        if (!isEmailValid(state.email) || state.password.length < 6) {
             _uiState.update { it.copy(error = "Please enter a valid email and a password of at least 6 characters.") }
             return
         }
-        performAuthAction { authService.createUser(email, password) }
+
+        // This now passes the ByteArray? correctly
+        performAuthAction {
+            authService.createUser(
+                email = state.email,
+                password = state.password,
+                username = state.username,
+                profilePicture = state.profilePicture
+            )
+        }
+    }
+    fun onUsernameChange(username: String) {
+        _uiState.update { it.copy(username = username, error = null) }
     }
 
     fun onGoogleSignInClick() {
