@@ -55,12 +55,7 @@ fun SpaceDetailScreen(
         return
     }
 
-    /*if (space == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Space not found.") }
-        return
-    }*/
     if (space == null) {
-        // --- TEMPORARY DIAGNOSTIC ---// This will display the exact value of spaceId that is causing the problem.
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Space not found.")
@@ -74,15 +69,18 @@ fun SpaceDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(space!!.name, fontWeight = FontWeight.SemiBold) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
-            )
+            Column {
+                TopAppBar(
+                    title = { Text(space!!.name, fontWeight = FontWeight.SemiBold) },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+            }
         },
         bottomBar = {
             MessageInput(

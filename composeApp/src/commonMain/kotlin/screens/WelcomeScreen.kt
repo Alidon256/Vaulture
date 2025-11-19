@@ -32,26 +32,11 @@ fun WelcomeScreen(
     ) {
         // Background Image
         Image(
-            painter = painterResource(Res.drawable.bg_one), // You'll need to add this image
+            painter = painterResource(Res.drawable.bg_one),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-
-        // Dark overlay
-        /*Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF1B5E20),
-                            Color(0xFF2E7D32),
-                            Color(0xFF1B5E20)
-                        )
-                    )
-                )
-        )*/
 
         // Content
         Column(
@@ -70,20 +55,7 @@ fun WelcomeScreen(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Globe Icon/Logo
-                /*Text(
-                    text = "🌍",
-                    fontSize = 72.sp,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
 
-                Text(
-                    text = "vaulture",
-                    fontSize = 42.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )*/
                 Image(
                     painter = painterResource(Res.drawable.logo), // You'll need to add this image
                     contentDescription = null,
@@ -100,33 +72,31 @@ fun WelcomeScreen(
                 )
             }
 
-            // Bottom Section with Buttons
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(bottom = 32.dp)
             ) {
-                // Get Started Button
                 Button(
                     onClick = onGetStarted,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .widthIn(min = 300.dp)
                         .height(56.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32)
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "Get started",
+                        text = "Get started Now",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Login Link
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -156,5 +126,8 @@ fun WelcomeScreen(
 @Composable
 @Preview
 fun WelcomeScreenPreview() {
-    WelcomeScreen()
+    WelcomeScreen(
+        onGetStarted = {},
+        onLoginClicked = {}
+    )
 }

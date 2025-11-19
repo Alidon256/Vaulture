@@ -13,87 +13,116 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
-// Assuming your generated resources are here
 import vaulture.composeapp.generated.resources.*
 
-// Data class for a destination item
 data class DealDestination(
     val id: String,
     val cityName: String,
-    val imageRes: DrawableResource, // Using DrawableResource for Compose Multiplatform
-    val details: String, // Could be price like "$50" or likes like "3265"
-    val isLarge: Boolean = false, // To differentiate the "Rome" card style if needed for text
-    val span: Int = 1 // Default span for medium cards
+    val imageRes: DrawableResource,
+    val details: String,
+    val isLarge: Boolean = false,
+    val span: Int = 1
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BestDealsScreen() { // Removed parameter as we'll define data inside
+fun BestDealsScreen(onGetStarted: () -> Unit) {
 
     val deals = listOf(
-        DealDestination("1", "Uganda", Res.drawable.uganda, "3265", isLarge = true, span = 2), // Rome takes 2 spans
-        DealDestination("2", "South Africa", Res.drawable.kenya, "50$", span = 1),
-        DealDestination("3", "Kenya", Res.drawable.egypt, "110$", span = 1),
-        DealDestination("4", "Egypt", Res.drawable.nigeria, "4385", span = 2) // London takes 2 spans
+        DealDestination("1", "Uganda", Res.drawable.uganda, "3265 Likes", isLarge = true, span = 2),
+        DealDestination("2", "South Africa", Res.drawable.kenya, "$50", span = 1),
+        DealDestination("3", "Kenya", Res.drawable.egypt, "$110", span = 1),
+        DealDestination("4", "Egypt", Res.drawable.nigeria, "4385 Likes", span = 2)
     )
 
     Scaffold(
-        containerColor = Color(0xFFE4E4E4), // Light gray background from design
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Find best deals",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp, // Prominent title
-                        color = Color.Black
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Transparent // Make TopAppBar transparent
-                )
-            )
-        },
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            Button(
-                onClick = { /* TODO: Handle Get Started click */ },
+            // Bottom bar with indicators and button for a cohesive feel
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 20.dp, start = 20.dp, bottom = 24.dp) // Generous padding
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)) // Green button
+                    .padding(horizontal = 24.dp, vertical = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Get started", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                // Page indicator (now shows this is screen 3 of 3)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .width(16.dp)
+                            .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+                    )
+                    Box(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .width(16.dp)
+                            .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+                    )
+                    Box(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .width(32.dp)
+                            .background(Color(0xFF2E7D32), RoundedCornerShape(4.dp))
+                    )
+                }
+
+                Button(
+                    onClick = onGetStarted,
+                    modifier = Modifier.height(50.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
+                ) {
+                    Text(
+                        "Get Started",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
             }
         }
     ) { paddingValues ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2), // 2 columns for the grid
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(start = 16.dp, end = 16.dp), // Horizontal padding for the grid
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(paddingValues)
+            .consumeWindowInsets(paddingValues)
         ) {
-            itemsIndexed(
-                deals,
-                key = { _, item -> item.id },
-                span = { _, item -> GridItemSpan(item.span) }) { index, destination ->
-                DestinationCard(destination)
+            // Integrated Title
+            Text(
+                "Find Your Next Adventure",
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 56.dp, bottom = 24.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp, end = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                itemsIndexed(
+                    deals,
+                    key = { _, item -> item.id },
+                    span = { _, item -> GridItemSpan(item.span) }) { _, destination ->
+                    DestinationCard(destination)
+                }
             }
         }
     }
@@ -104,9 +133,8 @@ fun DestinationCard(destination: DealDestination) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            // Adjust height based on whether it's the large "Rome" type card or others
-            .height(if (destination.cityName == "Uganda" || destination.cityName == "Egypt") 240.dp else 200.dp)
-            .clip(RoundedCornerShape(16.dp)), // Rounded corners for the card
+            .height(if (destination.isLarge) 240.dp else 200.dp)
+            .clip(RoundedCornerShape(16.dp)),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -114,37 +142,35 @@ fun DestinationCard(destination: DealDestination) {
                 painter = painterResource(destination.imageRes),
                 contentDescription = destination.cityName,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop // Crop to fill bounds
+                contentScale = ContentScale.Crop
             )
-            // Gradient overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
-                            startY = 400f // Start gradient lower to make top part clearer
+                            startY = 300f
                         )
                     )
             )
-            // Text content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp), // Padding inside the card
-                verticalArrangement = Arrangement.Bottom // Align text to bottom
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = destination.cityName,
                     color = Color.White,
-                    fontSize = if (destination.isLarge || destination.cityName == "London") 26.sp else 20.sp,
+                    fontSize = if (destination.isLarge) 24.sp else 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = destination.details,
                     color = Color.White.copy(alpha = 0.9f),
-                    fontSize = if (destination.isLarge || destination.cityName == "London") 18.sp else 14.sp,
+                    fontSize = if (destination.isLarge) 16.sp else 14.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -152,16 +178,10 @@ fun DestinationCard(destination: DealDestination) {
     }
 }
 
-// Dummy Preview Resources (replace with your actual image resources)
-// Ensure you have these drawable resources in your commonMain/resources/drawable folder
-// For example: img_rome.jpg, img_paris.jpg, etc.
-// If you don't have them yet, the preview might show errors for painterResource.
-// You can temporarily use placeholder colors for background until images are added.
-
 @Preview()
 @Composable
 fun BestDealsScreenPreview() {
-    AppTheme{ // Wrap in MaterialTheme for consistent preview
-        BestDealsScreen()
+    AppTheme {
+        BestDealsScreen(onGetStarted = {})
     }
 }

@@ -14,6 +14,7 @@ fun main() {
             applicationId = "1:703611560855:web:979aac53ec812d14555ad2",
             apiKey = "AIzaSyAd6dv9rKe1FWl9-vgo0PG5dn35E_MhnSs",
             projectId = "vaulture256",
+            storageBucket = "vaulture256.firebasestorage.app",
 
             )
     )

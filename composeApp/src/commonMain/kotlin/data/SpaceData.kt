@@ -75,6 +75,7 @@ object SpaceRepository {
   )
 
     fun getSpaces(): List<Space> = spaces
+    fun getMembers(): List<Member> = members
 
     fun getSpaceById(id: String): Space? = spaces.find { it.id == id }
 

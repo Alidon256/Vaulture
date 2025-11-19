@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +33,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
 import vaulture.composeapp.generated.resources.Res
-import vaulture.composeapp.generated.resources.bg_two
 import vaulture.composeapp.generated.resources.val_1
 
 @Composable
@@ -41,25 +41,27 @@ fun OnboardingScreenOne(
     onSkip: () -> Unit = {}
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ){innerPadding->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ){
+            verticalArrangement = Arrangement.SpaceBetween // Ensures space between top, middle, and bottom
+        ) {
             // Skip button at top
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = onSkip) {
                     Text(
                         "Skip",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Use theme color
                         fontSize = 16.sp
                     )
                 }
@@ -69,39 +71,41 @@ fun OnboardingScreenOne(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f) // Allows this column to take up available space
+                    .padding(horizontal = 24.dp)
             ) {
                 Text(
                     "Get Inspiration For Your Next Trip",
                     fontSize = 28.sp,
-                    modifier = Modifier.padding(16.dp),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    lineHeight = 36.sp // Improve line spacing for title
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
+                        .clip(RoundedCornerShape(24.dp)) // Add clipping for a modern look
                 ) {
                     Image(
                         painter = painterResource(Res.drawable.val_1),
-                        contentDescription = "Hikers enjoying a scenic view",
+                        contentDescription = "Scenic travel destination",
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color(0xFF1B5E20)),
                         contentScale = ContentScale.Crop
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    "We're happy to share our best trips for destinations where you can relax. But you can find the nicest cities as well",
+                    "We're happy to share our best trips for destinations where you can relax, but you can find the nicest cities as well.",
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Use theme color
+                    textAlign = TextAlign.Center,
+                    lineHeight = 26.sp // Improve line spacing for body
                 )
             }
 
@@ -109,25 +113,29 @@ fun OnboardingScreenOne(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 24.dp, vertical = 24.dp), // Consistent padding
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Page indicator (could be made dynamic)
-                Row {
+                // Improved Page indicator with fixed widths
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(
                         modifier = Modifier
                             .height(8.dp)
-                            .padding(horizontal = 4.dp)
+                            .width(32.dp) // Active indicator is wider
                             .background(Color(0xFF2E7D32), RoundedCornerShape(4.dp))
-                            .fillMaxWidth(0.08f)
                     )
                     Box(
                         modifier = Modifier
                             .height(8.dp)
-                            .padding(horizontal = 4.dp)
+                            .width(16.dp)
                             .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
-                            .fillMaxWidth(0.08f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .width(16.dp)
+                            .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
                     )
                 }
 
@@ -136,13 +144,15 @@ fun OnboardingScreenOne(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF2E7D32)
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.height(50.dp)
                 ) {
                     Text(
                         "Next",
                         color = Color.White,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
             }
@@ -151,9 +161,9 @@ fun OnboardingScreenOne(
 }
 
 @Composable
-@Preview()
-fun OnboardingScreenPreview(){
-    AppTheme(useDarkTheme = false, content ={
+@Preview
+fun OnboardingScreenPreview() {
+    AppTheme(useDarkTheme = false) {
         OnboardingScreenOne()
-    })
+    }
 }

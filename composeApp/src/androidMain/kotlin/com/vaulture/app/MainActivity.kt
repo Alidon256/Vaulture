@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.lifecycle.lifecycleScope
 import auth.AuthServiceImpl
 import auth.signInWithGoogleIdToken
@@ -18,6 +20,7 @@ import com.vaulture.app.R // Make sure R is imported
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseOptions
 import dev.gitlive.firebase.auth.auth
+import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.initialize
 import kotlinx.coroutines.launch
 import screens.AppNavigation
@@ -26,13 +29,12 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
-    // CRITICAL FIX: Use 'by lazy' to defer initialization until after onCreate()
-    // This ensures Firebase.initialize() has been called before Firebase.auth is accessed.
-    private val authService by lazy { AuthServiceImpl(Firebase.auth) }
+     private val authService by lazy { AuthServiceImpl(Firebase.auth) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
         // It's recommended to initialize Firebase in your Application class,
         // but for simplicity, we do it here. This must run before 'authService' is used.
         Firebase.initialize(
@@ -40,9 +42,12 @@ class MainActivity : ComponentActivity() {
             options = FirebaseOptions(
                 applicationId = "1:703611560855:android:4cc14354d3cfccf9555ad2",
                 apiKey = "AIzaSyAc29mp06dTHOsyBFoQ4k7N2b_Un4sSHxE",
-                projectId = "vaulture256"
+                projectId = "vaulture256",
+                storageBucket = "vaulture256.firebasestorage.app",
             )
         )
+
+        Firebase.firestore.setSettings(persistenceEnabled = true)
 
         // Register the activity result launcher for the Google Sign-In intent.
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

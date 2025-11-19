@@ -16,7 +16,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Flight
 import androidx.compose.material.icons.outlined.Hotel
@@ -44,9 +46,12 @@ import data.SimpleItem
 import data.TravelCategory
 import data.TravelStory
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
 import viewmodels.TravelViewModel
+import kotlin.time.ExperimentalTime
 
 // Data classes
 data class HeroItem(
@@ -77,49 +82,18 @@ fun HomeScreen(
 ) {
     // --- CORRECTED DATA LISTS WITH DIRECT IMAGE URLS ---
     val heroItems = remember {
-        listOf(
-            HeroItem("uganda_hero", "Uganda", "Discover the breathtaking Murchison Falls and diverse wildlife.", "https://images.pexels.com/photos/1660603/pexels-photo-1660603.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("kenya_hero", "Kenya", "Witness the great wildebeest migration in the Maasai Mara.", "https://images.pexels.com/photos/7139704/pexels-photo-7139704.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("egypt_hero", "Egypt", "Explore the ancient pyramids and mysteries of the Pharaohs.", "https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?q=80&w=2670&auto=format&fit=crop"),
-            HeroItem("tanzania_hero", "Tanzania", "Ascend Mount Kilimanjaro or relax on the beaches of Zanzibar.", "https://images.pexels.com/photos/1525041/pexels-photo-1525041.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("south_africa_hero", "South Africa", "Experience the vibrant culture of Cape Town and its stunning Table Mountain.", "https://images.pexels.com/photos/2395249/pexels-photo-2395249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("namibia_hero", "Namibia", "Marvel at the surreal landscapes of Deadvlei and the Fish River Canyon.", "https://images.pexels.com/photos/3514066/pexels-photo-3514066.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("ethiopia_hero", "Ethiopia", "Uncover the rock-hewn churches of Lalibela and ancient history.", "https://images.pexels.com/photos/12832846/pexels-photo-12832846.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("botswana_hero", "Botswana", "Glide through the Okavango Delta in a traditional mokoro.", "https://images.pexels.com/photos/1618526/pexels-photo-1618526.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("zimbabwe_hero", "Zimbabwe", "Feel the thunder of Victoria Falls, one of the Seven Natural Wonders.", "https://images.pexels.com/photos/3354427/pexels-photo-3354427.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            HeroItem("seychelles_hero", "Seychelles", "Relax on pristine white-sand beaches and turquoise waters.", "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
-        )
+        HomeRepository.getHeroItems()
     }
 
     val popularDestinations = remember {
-        listOf(
-            PopularDestinationItem("nigeria", "Nigeria", "https://images.pexels.com/photos/18447817/pexels-photo-18447817.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("rwanda", "Rwanda", "https://images.pexels.com/photos/13532393/pexels-photo-13532393.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("algeria", "Algeria", "https://images.pexels.com/photos/14878411/pexels-photo-14878411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("senegal", "Senegal", "https://images.pexels.com/photos/8083515/pexels-photo-8083515.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("cameroon", "Cameroon", "https://images.pexels.com/photos/7477943/pexels-photo-7477943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("madagascar", "Madagascar", "https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("mozambique", "Mozambique", "https://images.pexels.com/photos/3225528/pexels-photo-3225528.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("zambia", "Zambia", "https://images.pexels.com/photos/592077/pexels-photo-592077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("tunisia", "Tunisia", "https://images.pexels.com/photos/1126569/pexels-photo-1126569.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("ivory_coast", "Côte d'Ivoire", "https://images.pexels.com/photos/12716492/pexels-photo-12716492.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
-        )
+        HomeRepository.getPopularDestinations()
     }
 
+
     val recommendedDestinations = remember {
-        listOf(
-            PopularDestinationItem("morocco", "Morocco", "https://images.pexels.com/photos/3531895/pexels-photo-3531895.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("ghana", "Ghana", "https://images.pexels.com/photos/4553109/pexels-photo-4553109.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("libya", "Libya", "https://images.pexels.com/photos/8996220/pexels-photo-8996220.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("sudan", "Sudan", "https://images.pexels.com/photos/8885133/pexels-photo-8885133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("angola", "Angola", "https://images.pexels.com/photos/12397446/pexels-photo-12397446.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("gabon", "Gabon", "https://images.pexels.com/photos/6636336/pexels-photo-6636336.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("mali", "Mali", "https://images.pexels.com/photos/5472260/pexels-photo-5472260.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("somalia", "Somalia", "https://images.pexels.com/photos/7139704/pexels-photo-7139704.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("togo", "Togo", "https://images.pexels.com/photos/12848979/pexels-photo-12848979.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
-            PopularDestinationItem("benin", "Benin", "https://images.pexels.com/photos/7793739/pexels-photo-7793739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")
-        )
+        HomeRepository.getRecommendedDestinations()
     }
+
 
     // --- STATE MANAGEMENT FOR UI AND SEARCH ---
     val sideNavItems = remember {
@@ -156,31 +130,80 @@ fun HomeScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                modifier = Modifier.widthIn(max = 280.dp) // --- MODERN UI: Constrain the width
+            ) {
+                // --- MODERN UI: Add a profile header ---
                 Column(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+                        .padding(horizontal = 24.dp, vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        "Vaulture",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                    AsyncImage(
+                        model = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                        contentDescription = "User Profile Picture",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     )
-                    sideNavItems.forEach { item ->
-                        SideNavigationItem(
-                            item = item,
-                            isSelected = item == selectedSideNavItem,
-                            onClick = {
-                                selectedSideNavItem = item
-                                scope.launch { drawerState.close() }
-                            }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "Anthony",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "anthony@vaulture.com",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
+
+
+                Spacer(Modifier.height(16.dp))
+                sideNavItems.forEach { item ->
+                    NavigationDrawerItem(
+                        label = { Text(item.title) },
+                        icon = { Icon(item.icon, contentDescription = item.title) },
+                        selected = item == selectedSideNavItem,
+                        onClick = {
+                            selectedSideNavItem = item
+                            scope.launch { drawerState.close() }
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp) // Add padding to items
+                    )
+                }
+
+                // --- Pushes Logout to the bottom ---
+                Spacer(Modifier.weight(1f))
+
+
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+                NavigationDrawerItem(
+                    label = { Text("Logout") },
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = "Logout"
+                        )
+                    },
+                    selected = false,
+                    onClick = {
+                        // TODO: Implement actual logout logic
+                        scope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(12.dp)
+                )
             }
         }
-    ) {
+    )
+    {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val isWideScreen = this.maxWidth > 600.dp
 
@@ -199,28 +222,6 @@ fun HomeScreen(
                         .padding(paddingValues)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    SearchBar(
-                        query = searchQuery,
-                        onQueryChange = { searchQuery = it },
-                        onSearch = {
-                            println("Searched for: $it")
-                            isSearchExpanded = false
-                        },
-                        isExpanded = isSearchExpanded,
-                        onToggleExpanded = { isSearchExpanded = !isSearchExpanded },
-                        placeholderText = "Search destinations...",
-                        suggestions = suggestions,
-                        onSuggestionClick = { item ->
-                            onNavigateToDetail(item.title)
-                            isSearchExpanded = false
-                        },
-                        recentSearches = recentSearches,
-                        onRecentSearchClick = { recent ->
-                            searchQuery = recent
-                            println("Searched for: $recent")
-                            isSearchExpanded = false
-                        }
-                    )
 
                     AnimatedVisibility(
                         visible = !isSearchExpanded,
@@ -233,6 +234,30 @@ fun HomeScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = contentPadding)
                         ) {
+                            item{
+                                SearchBar(
+                                    query = searchQuery,
+                                    onQueryChange = { searchQuery = it },
+                                    onSearch = {
+                                        println("Searched for: $it")
+                                        isSearchExpanded = false
+                                    },
+                                    isExpanded = isSearchExpanded,
+                                    onToggleExpanded = { isSearchExpanded = !isSearchExpanded },
+                                    placeholderText = "Search destinations...",
+                                    suggestions = suggestions,
+                                    onSuggestionClick = { item ->
+                                        onNavigateToDetail(item.title)
+                                        isSearchExpanded = false
+                                    },
+                                    recentSearches = recentSearches,
+                                    onRecentSearchClick = { recent ->
+                                        searchQuery = recent
+                                        println("Searched for: $recent")
+                                        isSearchExpanded = false
+                                    }
+                                )
+                            }
                             item {
                                 val pagerState = rememberPagerState { heroItems.size }
                                 Box(
@@ -271,11 +296,7 @@ fun HomeScreen(
                             }
 
                             item {
-                                Text(
-                                    "Popular destination",
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
-                                )
+                                SectionTitle(title = "Popular Now",onSeeMoreClick = {})
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -289,27 +310,9 @@ fun HomeScreen(
                             item {
                                 VaultureHorizontalDivider()
                             }
+
                             item {
-                                Text(
-                                    "Recommended destinations",
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
-                                )
-                                LazyRow(
-                                    contentPadding = PaddingValues(horizontal = 16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    items(recommendedDestinations) { destination ->
-                                        PopularDestinationCard(destination, onClick = { onNavigateToDetail(destination.id) })
-                                    }
-                                }
-                                //Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            item {
-                                VaultureHorizontalDivider()
-                            }
-                            item {
-                                SectionTitle(title = "Just for You")
+                                SectionTitle(title = "Just for You",onSeeMoreClick = {})
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -318,14 +321,14 @@ fun HomeScreen(
                                         ForYouSuggestionCard(suggestion, onClick = { /* TODO */ })
                                     }
                                 }
-                               // Spacer(modifier = Modifier.height(32.dp))
+                                // Spacer(modifier = Modifier.height(32.dp))
                             }
                             item {
                                 VaultureHorizontalDivider()
                             }
-                            // --- 3. NEW "Travel Styles" SECTION ---
+
                             item {
-                                SectionTitle(title = "Explore by Travel Style")
+                                SectionTitle(title = "Explore by Travel Style",onSeeMoreClick = {})
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(24.dp)
@@ -340,9 +343,9 @@ fun HomeScreen(
                                 VaultureHorizontalDivider()
                             }
 
-                            // --- 4. Popular Destinations (Existing) ---
+
                             item {
-                                SectionTitle(title = "Popular Destinations") // Use the new title composable
+                                SectionTitle(title = "Popular Destinations",onSeeMoreClick = {}) // Use the new title composable
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -359,7 +362,7 @@ fun HomeScreen(
                             }
                             // --- 5. NEW "Featured Stories" SECTION ---
                             item {
-                                SectionTitle(title = "Featured Stories")
+                                SectionTitle(title = "Featured Stories",onSeeMoreClick = {})
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -376,7 +379,7 @@ fun HomeScreen(
                             }
                             // --- 6. Recommended Destinations (Existing) ---
                             item {
-                                SectionTitle(title = "Recommended For You")
+                                SectionTitle(title = "Recommended For You", onSeeMoreClick = {})
                                 LazyRow(
                                     contentPadding = PaddingValues(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -393,17 +396,6 @@ fun HomeScreen(
             }
         }
     }
-}
-
-
-
-@Composable
-fun SectionTitle(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-    )
 }
 
 
@@ -448,15 +440,15 @@ fun HeroCard(item: HeroItem) {
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                            startY = 300f
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                            startY = 150f
                         )
                     )
             )
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(16.dp)
+                    .padding(top= 16.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
             ) {
                 Text(item.title, style = MaterialTheme.typography.headlineMedium.copy(color = Color.White))
                 Text(item.description, style = MaterialTheme.typography.bodyMedium.copy(color = Color.White), maxLines = 2)
@@ -618,42 +610,131 @@ fun TravelStoryCard(story: TravelStory, onClick: () -> Unit) {
     }
 }
 
+
 @Composable
-fun ForYouSuggestionCard(suggestion: ForYouSuggestion, onClick: () -> Unit) {
+fun ForYouSuggestionCard(item: ForYouSuggestion, onClick: () -> Unit) {
     Card(
+        modifier = Modifier.width(280.dp).height(280.dp),
         onClick = onClick,
-        modifier = Modifier.width(220.dp),
-        shape = MaterialTheme.shapes.large
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = suggestion.imageUrl,
-                contentDescription = suggestion.title,
+                model = item.imageUrl,
+                contentDescription = item.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(64.dp).clip(MaterialTheme.shapes.medium)
+                modifier = Modifier.fillMaxSize()
             )
-
-            Spacer(Modifier.width(16.dp))
-
-            Column {
-                Text(
-                    suggestion.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                        startY = 150f
+                    )
                 )
-                Text(
-                    suggestion.subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            )
+            Column(modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)) {
+                Text(item.title, color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(item.subtitle, color = Color.White.copy(alpha = 0.9f), style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFFFC107), modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("${item.rating} (${item.reviews} reviews)", style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                }
             }
         }
     }
 }
+@Composable
+fun SectionTitle(title: String, modifier: Modifier = Modifier, onSeeMoreClick: () -> Unit) {
+    Row(
+        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        TextButton(onClick = onSeeMoreClick) {
+            Text("See more", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+@OptIn(ExperimentalTime::class)
+@Composable
+fun Greeting(name: String?) {
+    val hour = remember { kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour }
+    val greetingText = when (hour) {
+        in 0..11 -> "Good morning"
+        in 12..16 -> "Good afternoon"
+        else -> "Good evening"
+    }
+
+    Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
+        Text(greetingText, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (!name.isNullOrBlank()) {
+            Text(name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+@Composable
+private fun HomeDrawerContent(
+    userName: String,
+    sideNavItems: List<SideNavItem>,
+    onNavItemClick: (SideNavItem) -> Unit,
+    onLogoutClick: () -> Unit
+) {
+    var selectedSideNavItem by remember { mutableStateOf<SideNavItem?>(null) }
+
+    ModalDrawerSheet(modifier = Modifier.widthIn(max = 280.dp)) {
+        // Profile Header
+        Column(
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            AsyncImage(
+                model = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                contentDescription = "User Profile Picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(80.dp).clip(CircleShape).border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(userName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text("anthony@vaulture.com", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Navigation Items
+        sideNavItems.forEach { item ->
+            NavigationDrawerItem(
+                label = { Text(item.title) },
+                icon = { Icon(item.icon, contentDescription = item.title) },
+                selected = item == selectedSideNavItem,
+                onClick = {
+                    selectedSideNavItem = item
+                    onNavItemClick(item)
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+
+        Spacer(Modifier.weight(1f)) // Pushes logout to the bottom
+
+        // Logout
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+        NavigationDrawerItem(
+            label = { Text("Logout") },
+            icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") },
+            selected = false,
+            onClick = onLogoutClick,
+            modifier = Modifier.padding(12.dp)
+        )
+    }
+}
+
 
 
 @Preview

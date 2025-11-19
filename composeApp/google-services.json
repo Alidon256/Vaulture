@@ -15,39 +15,10 @@
       },
       "oauth_client": [
         {
-          "client_id": "703611560855-21987cha3t7sfq8ol1n0ev53o05ja6di.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAc29mp06dTHOsyBFoQ4k7N2b_Un4sSHxE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "703611560855-21987cha3t7sfq8ol1n0ev53o05ja6di.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:703611560855:android:ef35d297c1a15527555ad2",
-        "android_client_info": {
-          "package_name": "org.vaulture.com"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "703611560855-eejk7dtf7gb0apsjvm5gmct97db2jvoo.apps.googleusercontent.com",
+          "client_id": "703611560855-jorb424tn6kd9dmtn61q7c7obrf412kg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "org.vaulture.com",
+            "package_name": "com.vaulture.app",
             "certificate_hash": "a040b91ac2cdc6604e3913baa5e42fd9455b4c3c"
           }
         },

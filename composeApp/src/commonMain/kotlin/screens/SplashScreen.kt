@@ -5,7 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -37,17 +39,19 @@ fun SplashScreen(onTimeout: () -> Unit) {
         onTimeout()
     }
     AppTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Image(
+
+                Icon(
                     painter = painterResource(Res.drawable.logo),
                     contentDescription = "Vaulture Logo",
                     modifier = Modifier
                         .size(200.dp)
-                        .scale(scale.value)
+                        .scale(scale.value),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }

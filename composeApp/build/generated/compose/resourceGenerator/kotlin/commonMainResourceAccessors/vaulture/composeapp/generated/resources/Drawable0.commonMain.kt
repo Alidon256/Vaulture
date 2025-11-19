@@ -133,7 +133,7 @@ internal val Res.drawable.val_1: DrawableResource by lazy {
 
 internal val Res.drawable.val_2: DrawableResource by lazy {
       DrawableResource("drawable:val_2", setOf(
-        ResourceItem(setOf(), "${MD}drawable/val_2.png", -1, -1),
+        ResourceItem(setOf(), "${MD}drawable/val_2.jpg", -1, -1),
       ))
     }
 

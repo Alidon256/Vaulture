@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinxSerialization) // Ensure this is present
+   // id("androidx.navigation.safeargs.kotlin") version "2.9.5" // Add this plugin
 }
 
 kotlin {
@@ -53,6 +55,9 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.4.0"))
             implementation(libs.google.firebase.auth)
             implementation(libs.coil.network.okhttp)
+            implementation(libs.androidx.media3.exoplayer)
+            implementation(libs.androidx.media3.exoplayer.dash)
+            implementation(libs.androidx.media3.ui)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -70,8 +75,14 @@ kotlin {
             implementation(libs.firebase.auth)
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.storage)
-            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-
+            implementation("dev.gitlive:firebase-database:2.3.0")
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.datetime)
+        }
+        jsMain.dependencies {
+            implementation(compose.html.core)
+            implementation(compose.runtime)
+            implementation(compose.material)
         }
 
     }
@@ -106,9 +117,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-
-compose.experimental {
-    web.application {}
 }

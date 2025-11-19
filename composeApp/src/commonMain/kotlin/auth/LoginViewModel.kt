@@ -1,4 +1,4 @@
-package auth
+/*package auth
 
 import base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -144,4 +144,106 @@ class LoginViewModel(val authService: AuthService) : BaseViewModel() {
     private fun isEmailValid(email: String): Boolean {
         return email.isNotBlank() && "@" in email && "." in email
     }
+}*/
+package auth
+
+// If your BaseViewModel is from MOKO, this import is correct.
+// If not, adjust as needed or remove if you don't use a base class.
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+
+data class LoginUiState(
+    val email: String = "",
+    val password: String = "",
+    val username: String = "",
+    val profilePicture: ByteArray? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
+
+class LoginViewModel(val authService: AuthService) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    // Expose isAuthenticated from the service, starting eagerly to get the initial state.
+    val isAuthenticated: StateFlow<Boolean> = authService.isAuthenticated
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    // --- State Update Functions (for UI to call) ---
+    fun onEmailChange(email: String) = _uiState.update { it.copy(email = email, error = null) }
+    fun onPasswordChange(password: String) = _uiState.update { it.copy(password = password, error = null) }
+    fun onUsernameChange(username: String) = _uiState.update { it.copy(username = username, error = null) }
+    fun onProfilePictureChange(bytes: ByteArray?) = _uiState.update { it.copy(profilePicture = bytes, error = null) }
+    fun clearError() = _uiState.update { it.copy(error = null) }
+
+
+    // --- Action Functions (for UI to trigger) ---
+
+    fun onSignInClick() {
+        if (_uiState.value.isLoading) return
+        val (email, password) = _uiState.value
+        if (!isEmailValid(email) || password.isBlank()) {
+            _uiState.update { it.copy(error = "Please enter a valid email and password.") }
+            return
+        }
+
+        performAuthAction("Email Sign-In") {
+            authService.signInWithEmail(email, password)
+            authService.onSignInSuccess() // Check/create profile on sign-in
+        }
+    }
+
+    fun onCreateAccountClick() {
+        if (_uiState.value.isLoading) return
+        val state = _uiState.value
+        if (state.username.isBlank() || !isEmailValid(state.email) || state.password.length < 6) {
+            _uiState.update { it.copy(error = "Please provide a username, valid email, and a password of at least 6 characters.") }
+            return
+        }
+
+        performAuthAction("Account Creation") {
+            // Step 1: Fast auth user creation
+            val uid = authService.createAuthUser(state.email, state.password)
+            // Step 2: Slower profile and image creation
+            authService.createUserProfile(
+                uid = uid,
+                email = state.email,
+                username = state.username,
+                profilePicture = state.profilePicture
+            )
+        }
+    }
+
+    fun onGoogleSignInClick() {
+        if (_uiState.value.isLoading) return
+        performAuthAction("Google Sign-In") {
+            authService.signInWithGoogle()
+            authService.onSignInSuccess() // Check/create profile after Google sign-in
+        }
+    }
+
+    private fun performAuthAction(actionName: String, action: suspend () -> Unit) {
+        println("ViewModel: Starting action '$actionName'.")
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        viewModelScope.launch {
+            try {
+                action()
+                println("ViewModel: Action '$actionName' completed successfully.")
+                // On success, the isAuthenticated collector will handle UI navigation.
+                // We just need to stop the loading indicator.
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                val errorMessage = e.message ?: "An unknown error occurred."
+                println("ViewModel: Action '$actionName' FAILED. Error: $errorMessage")
+                _uiState.update { it.copy(isLoading = false, error = errorMessage) }
+            }
+        }
+    }
+
+    private fun isEmailValid(email: String): Boolean {
+        return email.isNotBlank() && "@" in email && "." in email
+    }
 }
+

@@ -1,26 +1,41 @@
 package auth
 
-import dev.gitlive.firebase.auth.js
+import dev.gitlive.firebase.auth.js // Required for the 'FirebaseAuth.js' property
 import kotlinx.coroutines.await
 import kotlin.js.Promise
 
-// --- Dynamic JS Interop to call our global JavaScript function ---
+// --- Native JavaScript Interop Definition ---
 
-// Define an external function that matches the signature of our function in auth.js.
-// It takes the raw JavaScript auth object and returns a Promise.
-private external fun performGoogleSignIn(auth: dynamic): Promise<dynamic>
+// Defines a Kotlin interface that matches the native Firebase JS Auth object's structure.
+private external interface FirebaseJsAuth {
+    fun signInWithPopup(provider: dynamic): Promise<dynamic>
+}
 
+// This extension property provides a safe, typed way to access the native JS 'signInWithPopup' function.
+private val dev.gitlive.firebase.auth.FirebaseAuth.jsAuth: FirebaseJsAuth
+    get() = this.js.unsafeCast<FirebaseJsAuth>()
+
+// --- Dynamic JS Interop for Provider ---
+
+// This dynamic block allows us to write raw JavaScript to get the native provider.
+// We need to do this because the gitlive library does not provide a direct Kotlin equivalent.
+@JsModule("firebase/auth")
+@JsNonModule
+private external val GoogleAuthProviderModule: dynamic
 
 // --- Actual Implementations ---
 
 /**
  * Web's implementation of performGoogleSignIn.
- * It now delegates directly to our pure JavaScript helper function.
+ * It calls the native Firebase JS signInWithPopup method via our interop helper.
  */
 internal actual suspend fun AuthServiceImpl.performGoogleSignIn() {
-    // 1. Call the global JavaScript function, passing the raw JS auth object (this.auth.js).
-    // 2. Use .await() to wait for the JavaScript Promise to complete.
-    performGoogleSignIn(this.auth.js).await()
+    // 1. Create a new instance of the native provider directly.
+    // This resolves the "unused variable" warning and is the correct approach.
+    val jsProvider = js("new GoogleAuthProviderModule.GoogleAuthProvider()")
+
+    // 2. Call the native 'signInWithPopup' function and await the result.
+    auth.jsAuth.signInWithPopup(jsProvider).await()
 }
 
 /**
