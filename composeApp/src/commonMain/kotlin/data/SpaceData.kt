@@ -1,5 +1,8 @@
 package data
 
+import dev.gitlive.firebase.firestore.FieldValue
+import kotlinx.serialization.Serializable
+
 // --- DATA MODELS ---
 
 data class Member(
@@ -8,13 +11,24 @@ data class Member(
     val avatarUrl: String
 )
 
-data class Space(
+/*data class Space(
     val id: String,
     val name: String,
     val description: String,
     val members: List<Member>,
     val unreadCount: Int,
     val coverImageUrl: String
+)*/
+@Serializable
+data class Space(
+    val id: String = "",
+    val name: String = "",
+    val description: String = "",
+    val coverImageUrl: String = "",
+    val ownerId: String = "",
+    val memberIds: List<String> = emptyList(),
+    // Use server timestamp for creation date
+    val createdAt: FieldValue = FieldValue.serverTimestamp
 )
 
 data class Message(
@@ -26,7 +40,7 @@ data class Message(
 )
 
 // --- MOCK DATA REPOSITORY ---
-
+/*
 object SpaceRepository {
 
     private val members = listOf(
@@ -81,3 +95,14 @@ object SpaceRepository {
 
     fun getMessagesForSpace(spaceId: String): List<Message> = messages.shuffled() // Return shuffled for variety
 }
+*/
+@Serializable
+data class SpaceMessage(
+    val id: String = "",
+    val spaceId: String = "",
+    val authorId: String = "",
+    val authorName: String = "",
+    val authorAvatarUrl: String = "",
+    val text: String = "",
+    val timestamp: FieldValue = FieldValue.serverTimestamp
+)

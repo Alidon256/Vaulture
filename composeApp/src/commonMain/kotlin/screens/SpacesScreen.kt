@@ -1,5 +1,9 @@
 package screens
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+
+/*
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.spring
@@ -555,6 +559,233 @@ private fun SpaceListItemPreview() {
         SpaceListItem(
             space = SpaceRepository.getSpaces().first(),
             onClick = {}
+        )
+    }
+}*/
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.PhotoLibrary
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import data.ChatRepository
+import data.Space
+import org.jetbrains.compose.resources.painterResource
+import vaulture.composeapp.generated.resources.Res
+import vaulture.composeapp.generated.resources.bg_one
+import viewmodels.SpaceViewModel
+
+enum class SpaceFilter {
+    Spaces, Memories, Chats
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SpacesScreen(
+    viewModel: SpaceViewModel, // ViewModel is now passed in
+    selectedFilter: SpaceFilter,
+    onFilterSelected: (SpaceFilter) -> Unit,
+    onSpaceClick: (spaceId: String) -> Unit,
+    onCreateSpaceClick: () -> Unit,
+    onAddStoryClick: () -> Unit,
+    onChatClick: (chatId: String) -> Unit
+) {
+    Scaffold(
+        topBar = {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                TopAppBar(
+                    title = { Text("Community", fontWeight = FontWeight.Bold) },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                )
+                FilterTabBar(
+                    selectedFilter = selectedFilter,
+                    onFilterSelected = onFilterSelected
+                )
+            }
+        },
+        floatingActionButton = {
+            when (selectedFilter) {
+                SpaceFilter.Spaces -> {
+                    FloatingActionButton(
+                        onClick = onCreateSpaceClick,
+                        shape = CircleShape,
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Create Space")
+                    }
+                }
+                SpaceFilter.Memories -> {
+                    FloatingActionButton(
+                        onClick = onAddStoryClick,
+                        shape = CircleShape,
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = "Add Story")
+                    }
+                }
+                SpaceFilter.Chats -> { /* No FAB for chats */ }
+            }
+        }
+    ) { paddingValues ->
+        AnimatedContent(
+            targetState = selectedFilter,
+            modifier = Modifier.padding(paddingValues),
+            transitionSpec = {
+                val slideDir = if (targetState.ordinal > initialState.ordinal) 1 else -1
+                (slideInHorizontally { it * slideDir } + fadeIn())
+                    .togetherWith(slideOutHorizontally { -it * slideDir } + fadeOut())
+                    .using(SizeTransform(clip = false))
+            },
+            label = "ScreenContent"
+        ) { filter ->
+            when (filter) {
+                SpaceFilter.Spaces -> SpacesListContent(
+                    viewModel = viewModel,
+                    onSpaceClick = onSpaceClick
+                )
+                SpaceFilter.Memories -> MemoriesScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    viewModel = viewModel
+                )
+                SpaceFilter.Chats -> ChatsScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    onChatClick = onChatClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SpacesListContent(viewModel: SpaceViewModel, onSpaceClick: (String) -> Unit) {
+    val spaces by viewModel.spaces.collectAsState()
+    val isLoading by viewModel.isLoadingSpaces.collectAsState()
+
+    if (isLoading && spaces.isEmpty()) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(spaces, key = { it.id }) { space ->
+                SpaceCard(space = space, onClick = { onSpaceClick(space.id) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpaceCard(space: Space, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().height(220.dp).clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = space.coverImageUrl,
+                contentDescription = space.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                error = painterResource(Res.drawable.bg_one) // Fallback image
+            )
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(0.8f)),
+                        startY = 250f
+                    )
+                )
+            )
+            Column(
+                modifier = Modifier.align(Alignment.BottomStart).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = space.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = "${space.memberIds.size} members",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.9f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilterTabBar(
+    selectedFilter: SpaceFilter,
+    onFilterSelected: (SpaceFilter) -> Unit
+) {
+    TabRow(
+        selectedTabIndex = selectedFilter.ordinal,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.primary,
+        indicator = { tabPositions ->
+            TabRowDefaults.SecondaryIndicator(
+                modifier = Modifier.tabIndicatorOffset(tabPositions[selectedFilter.ordinal]),
+                height = 2.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    ) {
+        Tab(
+            selected = selectedFilter == SpaceFilter.Spaces,
+            onClick = { onFilterSelected(SpaceFilter.Spaces) },
+            icon = { Icon(Icons.Outlined.People, null) },
+            text = { Text("Spaces") }
+        )
+        Tab(
+            selected = selectedFilter == SpaceFilter.Memories,
+            onClick = { onFilterSelected(SpaceFilter.Memories) },
+            icon = { Icon(Icons.Outlined.PhotoLibrary, null) },
+            text = { Text("Memories") }
+        )
+        Tab(
+            selected = selectedFilter == SpaceFilter.Chats,
+            onClick = { onFilterSelected(SpaceFilter.Chats) },
+            icon = { Icon(Icons.Outlined.Chat, null) },
+            text = { Text("Chats") }
         )
     }
 }
